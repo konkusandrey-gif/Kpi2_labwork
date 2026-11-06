@@ -1,0 +1,66 @@
+erDiagram
+    User {
+        string id PK
+        string name
+        string email
+        string phone
+    }
+    Address {
+        string id PK
+        string userId FK
+        string city
+        string street
+        string house
+        boolean isDefault
+    }
+    Friendship {
+        string inviterId FK
+        string inviteeId FK
+    }
+    Promotion {
+        string id PK
+        string name
+        int discountPercent
+    }
+    MenuItem {
+        string id PK
+        string name
+        string description
+        float basePrice
+        string promotionId FK
+    }
+    Favorite {
+        string userId FK
+        string menuItemId FK
+    }
+    Courier {
+        string id PK
+        string name
+        string phone
+        string transportType
+    }
+    Order {
+        string id PK
+        string userId FK
+        string addressId FK
+        string courierId FK
+        string status
+    }
+    OrderItem {
+        string orderId FK
+        string menuItemId FK
+        int quantity
+        float fixedPrice
+    }
+
+    User ||--o{ Address : "has"
+    User ||--o{ Friendship : "invites"
+    User ||--o{ Friendship : "invited by"
+    User ||--o{ Favorite : "likes"
+    MenuItem ||--o{ Favorite : "liked in"
+    Promotion ||--o{ MenuItem : "applies to"
+    User ||--o{ Order : "places"
+    Address ||--o{ Order : "delivered to"
+    Courier ||--o{ Order : "delivers"
+    Order ||--o{ OrderItem : "contains"
+    MenuItem ||--o{ OrderItem : "included in"
