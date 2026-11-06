@@ -1,56 +1,73 @@
 erDiagram
     User {
-        string id PK
+        uuid id PK
         string name
-        string email
-        string phone
+        string email UK
+        string phone UK
+        datetime createdAt
     }
+
     Address {
-        string id PK
-        string userId FK
+        uuid id PK
+        uuid userId FK
         string city
         string street
         string house
         boolean isDefault
     }
+
     Friendship {
-        string inviterId FK
-        string inviteeId FK
+        uuid id PK
+        uuid inviterId FK "UK: (inviterId, inviteeId)"
+        uuid inviteeId FK "UK: (inviterId, inviteeId)"
+        datetime createdAt
     }
+
     Promotion {
-        string id PK
+        uuid id PK
         string name
-        int discountPercent
+        int discountPercentage
+        datetime activeUntil
     }
+
     MenuItem {
-        string id PK
+        uuid id PK
         string name
-        string description
-        float basePrice
-        string promotionId FK
+        string description "nullable"
+        float price
+        uuid promotionId FK "nullable"
     }
+
     Favorite {
-        string userId FK
-        string menuItemId FK
+        uuid id PK
+        uuid userId FK "UK: (userId, menuItemId)"
+        uuid menuItemId FK "UK: (userId, menuItemId)"
+        datetime createdAt
     }
+
     Courier {
-        string id PK
+        uuid id PK
         string name
-        string phone
-        string transportType
+        string phone UK
+        string vehicleType
     }
+
     Order {
-        string id PK
-        string userId FK
-        string addressId FK
-        string courierId FK
+        uuid id PK
+        uuid userId FK
+        uuid addressId FK "nullable"
+        uuid courierId FK "nullable"
         string status
+        float totalAmount
+        datetime createdAt
     }
+
     OrderItem {
-        string orderId FK
-        string menuItemId FK
+        uuid id PK
+        uuid orderId FK "UK: (orderId, menuItemId)"
+        uuid menuItemId FK "UK: (orderId, menuItemId)"
         int quantity
-        float fixedPrice
+        float priceAtPurchase
     }
 
     User ||--o{ Address : "has"
