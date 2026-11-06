@@ -9,7 +9,7 @@ User (Клієнт)
 
 -id (PK, UUID)
 -name
--email (unique)
+- email (unique)
 -phone (unique)
 -createdAt
 
