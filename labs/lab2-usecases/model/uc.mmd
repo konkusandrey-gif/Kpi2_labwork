@@ -1,0 +1,45 @@
+flowchart TB
+    %% Актори
+    AuthUser([Авторизований користувач])
+    Client([Клієнт])
+    Courier([Кур'єр])
+    Manager([Менеджер ресторану])
+
+    %% Узагальнення (Наслідування)
+    Client -->|успадковує| AuthUser
+    Courier -->|успадковує| AuthUser
+    Manager -->|успадковує| AuthUser
+
+    %% Базові прецеденти (для всіх)
+    UC_Login((Увійти в систему))
+    AuthUser --- UC_Login
+
+    %% Прецеденти Клієнта
+    UC_ViewMenu((Переглядати меню))
+    UC_Checkout((Оформити замовлення))
+    UC_Track((Відстежувати доставку))
+    
+    Client --- UC_ViewMenu
+    Client --- UC_Checkout
+    Client --- UC_Track
+
+    %% Include / Extend для головного процесу (Checkout)
+    UC_Pay((Оплатити замовлення))
+    UC_ApplyPromo((Застосувати акцію))
+    
+    UC_Checkout -.->|<<include>>| UC_Pay
+    UC_ApplyPromo -.->|<<extend>>| UC_Checkout
+
+    %% Прецеденти Кур'єра
+    UC_TakeDelivery((Прийняти замовлення))
+    UC_UpdateStatus((Оновити статус доставки))
+    
+    Courier --- UC_TakeDelivery
+    Courier --- UC_UpdateStatus
+
+    %% Прецеденти Менеджера
+    UC_ManageMenu((Управляти меню))
+    UC_ConfirmOrder((Підтвердити замовлення))
+    
+    Manager --- UC_ManageMenu
+    Manager --- UC_ConfirmOrder
