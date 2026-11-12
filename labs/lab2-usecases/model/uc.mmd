@@ -27,8 +27,8 @@ flowchart TB
     UC_Pay((Оплатити замовлення))
     UC_ApplyPromo((Застосувати акцію))
     
-    UC_Checkout -.->|"<<include>>"| UC_Pay
-    UC_ApplyPromo -.->|"<<extend>>"| UC_Checkout
+    UC_Checkout -.->|«include»| UC_Pay
+    UC_ApplyPromo -.->|«extend»| UC_Checkout
 
     %% Прецеденти Кур'єра
     UC_TakeDelivery((Прийняти замовлення))
