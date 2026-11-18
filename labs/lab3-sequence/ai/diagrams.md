@@ -1,4 +1,4 @@
-# Діаграми послідовності (Sequence Diagrams — FoodDelivery)
+# Діаграми послідовності (Sequence Diagrams — FoodDelivery) 
 
 ## SC-01: Успішне оформлення та оплата замовлення (Happy Path)
 
@@ -81,6 +81,10 @@ sequenceDiagram
 
     Ctrl->>Promo: validateReferralCode(userId, promoCode)
     activate Promo
+    Promo->>Repo: findReferralPromo(userId, promoCode)
+    activate Repo
+    Repo-->>Promo: promotion(discountPercentage=5, activeUntil)
+    deactivate Repo
     Promo-->>Ctrl: promoDetails(isValid=true, discountPercentage=5)
     deactivate Promo
 
@@ -113,6 +117,11 @@ sequenceDiagram
     UI->>Ctrl: submitOrder(userId, orderId, addressId)
     activate Ctrl
 
+    Ctrl->>Repo: saveOrderAddress(orderId, addressId)
+    activate Repo
+    Repo-->>Ctrl: order(addressId)
+    deactivate Repo
+
     Ctrl->>PG: chargePayment(orderId, finalAmount)
     activate PG
     PG-->>Ctrl: paymentResponse(status="APPROVED", txId)
@@ -127,6 +136,11 @@ sequenceDiagram
         Ctrl->>Notif: notifyRestaurantManager(orderId)
         activate Notif
         Notif-->>Ctrl: managerNotified(true)
+        deactivate Notif
+
+        Ctrl->>Notif: sendPaymentConfirmation(userId, orderId, finalAmount)
+        activate Notif
+        Notif-->>Ctrl: clientNotified(true)
         deactivate Notif
     end
 
