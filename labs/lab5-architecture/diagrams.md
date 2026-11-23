@@ -2,7 +2,7 @@
 
 Діаграма побудована в єдиній декларативній нотації **Mermaid `flowchart TB`** відповідно до `spec.md` та артефактів Завдань 1–4:
 * **Межа системи (`System Boundary: FoodDelivery`)** відокремлює внутрішні модулі від зовнішніх платіжних та комунікаційних шлюзів.
-* **Порти інтерфейсів `([I...])`:** зв'язок `---|"<<provide>>"|` показує компонент, що надає контракт, а `-->|"<<require>>"|` — компонент, який його споживає.
+* **Порти інтерфейсів `([I...])`:** зв'язок `---|"provide"|` показує компонент, що надає контракт, а `-->|"require"|` — компонент, який його споживає.
 
 ```mermaid
 flowchart TB
@@ -38,11 +38,11 @@ flowchart TB
             I_Promo(["IPromoService"])
             I_Notif(["INotificationService"])
 
-            OrderService -->|"&lt;&lt;require&gt;&gt;"| I_Promo
-            I_Promo ---|"&lt;&lt;provide&gt;&gt;"| PromoService
+            OrderService -->|"require"| I_Promo
+            I_Promo ---|"provide"| PromoService
 
-            OrderService -->|"&lt;&lt;require&gt;&gt;"| I_Notif
-            I_Notif ---|"&lt;&lt;provide&gt;&gt;"| NotificationService
+            OrderService -->|"require"| I_Notif
+            I_Notif ---|"provide"| NotificationService
         end
 
         I_UserRepo(["IUserRepository"])
@@ -65,55 +65,55 @@ flowchart TB
         end
 
         %% UI -> API
-        WebMobileUI -->|"&lt;&lt;require&gt;&gt;"| I_REST
-        StaffPortalUI -->|"&lt;&lt;require&gt;&gt;"| I_REST
-        I_REST ---|"&lt;&lt;provide&gt;&gt;"| APIGateway
+        WebMobileUI -->|"require"| I_REST
+        StaffPortalUI -->|"require"| I_REST
+        I_REST ---|"provide"| APIGateway
 
         %% API -> Services
-        APIGateway -->|"&lt;&lt;require&gt;&gt;"| I_Auth
-        APIGateway -->|"&lt;&lt;require&gt;&gt;"| I_Order
-        APIGateway -->|"&lt;&lt;require&gt;&gt;"| I_Catalog
-        APIGateway -->|"&lt;&lt;require&gt;&gt;"| I_Delivery
+        APIGateway -->|"require"| I_Auth
+        APIGateway -->|"require"| I_Order
+        APIGateway -->|"require"| I_Catalog
+        APIGateway -->|"require"| I_Delivery
 
-        I_Auth ---|"&lt;&lt;provide&gt;&gt;"| AuthService
-        I_Order ---|"&lt;&lt;provide&gt;&gt;"| OrderService
-        I_Catalog ---|"&lt;&lt;provide&gt;&gt;"| CatalogService
-        I_Delivery ---|"&lt;&lt;provide&gt;&gt;"| DeliveryService
+        I_Auth ---|"provide"| AuthService
+        I_Order ---|"provide"| OrderService
+        I_Catalog ---|"provide"| CatalogService
+        I_Delivery ---|"provide"| DeliveryService
 
         %% Services -> Data Access
-        AuthService -->|"&lt;&lt;require&gt;&gt;"| I_UserRepo
-        I_UserRepo ---|"&lt;&lt;provide&gt;&gt;"| UserRepository
+        AuthService -->|"require"| I_UserRepo
+        I_UserRepo ---|"provide"| UserRepository
 
-        OrderService -->|"&lt;&lt;require&gt;&gt;"| I_OrderRepo
-        I_OrderRepo ---|"&lt;&lt;provide&gt;&gt;"| OrderRepository
+        OrderService -->|"require"| I_OrderRepo
+        I_OrderRepo ---|"provide"| OrderRepository
 
-        PromoService -->|"&lt;&lt;require&gt;&gt;"| I_PromoRepo
-        I_PromoRepo ---|"&lt;&lt;provide&gt;&gt;"| PromoRepository
+        PromoService -->|"require"| I_PromoRepo
+        I_PromoRepo ---|"provide"| PromoRepository
 
-        CatalogService -->|"&lt;&lt;require&gt;&gt;"| I_CatDelRepo
-        DeliveryService -->|"&lt;&lt;require&gt;&gt;"| I_CatDelRepo
-        I_CatDelRepo ---|"&lt;&lt;provide&gt;&gt;"| CatalogDeliveryRepository
+        CatalogService -->|"require"| I_CatDelRepo
+        DeliveryService -->|"require"| I_CatDelRepo
+        I_CatDelRepo ---|"provide"| CatalogDeliveryRepository
 
         %% Data Access -> Database
-        UserRepository -->|"&lt;&lt;require&gt;&gt;"| I_SQL
-        OrderRepository -->|"&lt;&lt;require&gt;&gt;"| I_SQL
-        PromoRepository -->|"&lt;&lt;require&gt;&gt;"| I_SQL
-        CatalogDeliveryRepository -->|"&lt;&lt;require&gt;&gt;"| I_SQL
-        I_SQL ---|"&lt;&lt;provide&gt;&gt;"| PostgreSQL
+        UserRepository -->|"require"| I_SQL
+        OrderRepository -->|"require"| I_SQL
+        PromoRepository -->|"require"| I_SQL
+        CatalogDeliveryRepository -->|"require"| I_SQL
+        I_SQL ---|"provide"| PostgreSQL
     end
 
     %% External Integrations (Outside System Boundary)
     I_Payment(["IPaymentGateway"])
-    PaymentGateway["«External System»<br/>PaymentGateway<br/><i>Оплата без зберігання карт (NFR-04, timeout 15s)</i>"]
+    PaymentGateway["[External System]<br/>PaymentGateway<br/><i>Оплата без зберігання карт (NFR-04, timeout 15s)</i>"]
 
     I_GatewayNotif(["INotificationGateway"])
-    NotificationProvider["«External System»<br/>SMS / Email Provider<br/><i>Доставка SMS/Email/Push сповіщень</i>"]
+    NotificationProvider["[External System]<br/>SMS / Email Provider<br/><i>Доставка SMS/Email/Push сповіщень</i>"]
 
-    OrderService -->|"&lt;&lt;require&gt;&gt;"| I_Payment
-    I_Payment ---|"&lt;&lt;provide&gt;&gt;"| PaymentGateway
+    OrderService -->|"require"| I_Payment
+    I_Payment ---|"provide"| PaymentGateway
 
-    NotificationService -->|"&lt;&lt;require&gt;&gt;"| I_GatewayNotif
-    I_GatewayNotif ---|"&lt;&lt;provide&gt;&gt;"| NotificationProvider
+    NotificationService -->|"require"| I_GatewayNotif
+    I_GatewayNotif ---|"provide"| NotificationProvider
 
     %% Styling
     classDef component fill:#1f2937,stroke:#60a5fa,stroke-width:1.5px,color:#f3f4f6;
