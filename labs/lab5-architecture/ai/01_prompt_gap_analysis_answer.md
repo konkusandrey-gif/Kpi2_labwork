@@ -1,0 +1,19 @@
+# Відповідь AI: Аудит прогалин у `spec.md` та уточнювальні питання
+
+## 1. Вибір нотації діаграми та способу відображення `provided` / `required` інтерфейсів
+У розд. 4 `spec.md` зазначено «PlantUML Component Diagram або Mermaid», але остаточну нотацію не зафіксовано. У Завданні 5 обов'язково потрібно показати `provided`/`required`-інтерфейси, залежності та чітку межу системи (`System Boundary`).
+* **Питання:** Яку нотацію обираємо як єдину декларативну для репо та як саме позначаємо інтерфейси?
+  * **Варіант 1А (Mermaid `flowchart` із UML-стереотипами та вузлами інтерфейсів):** діаграма розміщується прямо в `diagrams.md` і нативно рендериться на GitHub без окремих картинок (як у Завданнях 1–4); межа системи задається через `subgraph FoodDelivery`, а `provided`/`required`-інтерфейси (`IOrderService`, `IPromoService`, `IOrderRepository`, `IPaymentGateway`, `INotificationProvider`) — окремими круглими вузлами-портами (`([I...])`) та підписами `<<provide>>` / `<<require>>`.
+  * **Варіант 1Б (PlantUML `@startuml` із нативними UML-інтерфейсами):** класичні UML-компоненти `[Component]` та символи «льодяник/розетка» `() "IInterface"`, але потрібен додатковий коміт зі згенерованим `.svg`/`.png` рендером, оскільки GitHub не рендерить `.puml` нативно.
+
+## 2. Гранулярність сервісів та узгодженість `OrderController` із Завданням 3
+У Завданні 3 `OrderController` напряму оркестрував `OrderRepository`, `PromoService` та `NotificationService`, а в чернетці `spec.md` додано `OrderService` та об'єднано каталог і доставку в один модуль `Catalog & Delivery Service`.
+* **Питання:** Як розділити внутрішні компоненти бізнес-логіки та Data Access, щоб зберегти 100% трасування до класів Завдання 3 і всіх 9 таблиць `er_v2.mmd`?
+  * **Варіант 2А (Чітка декомпозиція за доменами + явна трасованість до Lab 3):** розділити сервісний шар на 4 окремі компоненти (`OrderService`, `PromoService`, `NotificationService`, `CatalogService`, `DeliveryService`), а доступ до даних — на 4 репозиторії (`OrderRepository`, `UserRepository`, `PromoRepository`, `CatalogDeliveryRepository`), зафіксувавши в `AUDIT.md`, що `OrderController` (API-шар) делегує оркестрацію `UC_Checkout` у `OrderService`.
+  * **Варіант 2Б (Залишити укрупнені модулі з чернетки):** зберегти об'єднані блоки `Catalog & Delivery Service` і `User & Promo Repository`, що спростить схему, але зробить зв'язок із конкретними таблицями `er_v2.mmd` менш детальним.
+
+## 3. Межа системи (`System Boundary`) щодо автентифікації (`UC_Login`) та зовнішніх шлюзів
+У `spec.md` зазначено зовнішній `OAuth / Identity Provider`, проте в `er_v2.mmd` сутність `User` уже містить `email`, `phone` та `role`, а в `requirements.md` зовнішній OAuth не вимагається (є лише вимога HTTPS TLS 1.3 та заборона зберігання карткових даних `NFR-04`).
+* **Питання:** Чи залишаємо автентифікацію (`UC_Login`) внутрішнім модулем системи, а за межу виносимо лише підтверджені зовнішні інтеграції?
+  * **Варіант 3А (Внутрішній `AuthService` + 2 зовнішні шлюзи):** реалізувати `AuthController` та `AuthService` усередині межі `FoodDelivery` (на базі таблиці `User`), а поза `System Boundary` винести зовнішні сервіси, без яких не працюють вимоги `NFR-04`, `FR-05`, `FR-06`: **`PaymentGateway`** (інтерфейс `IPaymentGateway`) та **`SMS / Email Provider`** (інтерфейс `INotificationGateway`), вказавши зовнішній OAuth/Maps як поза обсягом (`out of scope`).
+  * **Варіант 3Б (Винести автентифікацію назовні):** залишити `OAuth / Identity Provider` як третю зовнішню систему поруч із `PaymentGateway` та `SMS / Email Provider`.
