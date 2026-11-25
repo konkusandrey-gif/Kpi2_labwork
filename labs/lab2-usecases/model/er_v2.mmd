@@ -1,0 +1,88 @@
+erDiagram
+    User {
+        uuid id PK
+        string name
+        string email UK
+        string phone UK
+        string role
+        datetime createdAt
+    }
+
+    Address {
+        uuid id PK
+        uuid userId FK
+        string city
+        string street
+        string house
+        boolean isDefault
+    }
+
+    Friendship {
+        uuid id PK
+        uuid inviterId FK "UK: (inviterId, inviteeId)"
+        uuid inviteeId FK "UK: (inviterId, inviteeId)"
+        datetime createdAt
+    }
+
+    Promotion {
+        uuid id PK
+        string name
+        int discountPercentage
+        datetime activeUntil
+    }
+
+    MenuItem {
+        uuid id PK
+        string name
+        string description "nullable"
+        float price
+        uuid promotionId FK "nullable"
+    }
+
+    Favorite {
+        uuid id PK
+        uuid userId FK "UK: (userId, menuItemId)"
+        uuid menuItemId FK "UK: (userId, menuItemId)"
+        datetime createdAt
+    }
+
+    Courier {
+        uuid id PK
+        string name
+        string phone UK
+        string vehicleType
+    }
+
+    Order {
+        uuid id PK
+        uuid userId FK
+        uuid addressId FK "nullable"
+        uuid courierId FK "nullable"
+        uuid managerId FK "nullable"
+        string status
+        string promoCode "nullable"
+        float discountAmount
+        float totalAmount
+        datetime createdAt
+    }
+
+    OrderItem {
+        uuid id PK
+        uuid orderId FK "UK: (orderId, menuItemId)"
+        uuid menuItemId FK "UK: (orderId, menuItemId)"
+        int quantity
+        float priceAtPurchase
+    }
+
+    User ||--o{ Address : "has"
+    User ||--o{ Friendship : "invites"
+    User ||--o{ Friendship : "invited by"
+    User ||--o{ Favorite : "likes"
+    MenuItem ||--o{ Favorite : "liked in"
+    Promotion ||--o{ MenuItem : "applies to"
+    User ||--o{ Order : "places"
+    User ||--o{ Order : "confirms"
+    Address ||--o{ Order : "delivered to"
+    Courier ||--o{ Order : "delivers"
+    Order ||--o{ OrderItem : "contains"
+    MenuItem ||--o{ OrderItem : "included in"
